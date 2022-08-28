@@ -12,6 +12,13 @@ const {
   notFoundUserProfile,
 } = require('../utils/const');
 
+const {
+  JWT_SECRET,
+  JWT_TTL,
+  NODE_ENV,
+  DEV_JWT_SECRET,
+} = require('../utils/config');
+
 const getUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
@@ -67,8 +74,8 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, process.env.NODE_ENV === 'production' ? process.env.JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
-      res.send({ token });
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : DEV_JWT_SECRET, { expiresIn: JWT_TTL });
+      res.status(200).send({ token });
     })
     .catch(next);
 };
