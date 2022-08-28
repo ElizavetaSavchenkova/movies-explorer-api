@@ -2,6 +2,8 @@ const allowedCors = [
   'http://localhost:3000',
   'https://localhost:3000',
   'https://localhost:3001',
+  'https://moviesexplorer.dipl.nomoredomains.sbs',
+  'http://moviesexplorer.dipl.nomoredomains.sbs',
 ];
 
 // eslint-disable-next-line consistent-return

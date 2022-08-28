@@ -25,17 +25,17 @@ const movieSchema = new mongoose.Schema({
   image: {
     type: String,
     required: true,
-    validate: [isUrl, 'error url image'],
+    validate: [isUrl, 'Error image URL'],
   },
   trailerLink: {
     type: String,
     required: true,
-    validate: [isUrl, 'error link'],
+    validate: [isUrl, 'error URL'],
   },
   thumbnail: {
     type: String,
     required: true,
-    validate: [isUrl, 'error link'],
+    validate: [isUrl, 'error URL'],
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,

@@ -5,12 +5,12 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const { errors } = require('celebrate');
-const cors = require('./middlewares/cors');
-const router = require('./routes/routes');
-const { requestLogger, errorLogger } = require('./middlewares/logger');
-const { errorVision } = require('./middlewares/errorVision');
 const { limiter } = require('./middlewares/limiter');
 const { PORT, URL_MONGO } = require('./utils/config');
+const cors = require('./middlewares/cors');
+const router = require('./routes/index');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { errorVision } = require('./middlewares/errorVision');
 
 const app = express();
 
