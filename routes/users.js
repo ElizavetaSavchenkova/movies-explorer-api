@@ -4,7 +4,14 @@ const {
   getUser, updateProfile,
 } = require('../controllers/users');
 
-router.get('/me', getUser) //возвращает информацию о пользователе
-router.patch('/me', updateProfile) //обновляает информацию о пользователе
+const {
+  validateUpdateUser,
+} = require('../middlewares/validate');
+
+const auth = require('../middlewares/auth');
+
+router.use(auth);
+router.get('/me', getUser);
+router.patch('/me', validateUpdateUser, updateProfile);
 
 module.exports = router;

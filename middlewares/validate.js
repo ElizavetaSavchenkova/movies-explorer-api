@@ -1,4 +1,6 @@
 const { celebrate, Joi } = require('celebrate');
+const { URL } = require('../utils/const');
+
 
 module.exports.validateCreateNewUser = celebrate({
   body: Joi.object().keys({
@@ -14,13 +16,6 @@ module.exports.validateCreateNewUser = celebrate({
  //}),
 //});
 
-//module.exports.validateUpdateUser = celebrate({
-  //body: Joi.object().keys({
-   // name: Joi.string().min(2).max(30),
-   // about: Joi.string().min(2).max(30),
-  //}),
-//});
-
 module.exports.validateUserEmail = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
@@ -28,16 +23,32 @@ module.exports.validateUserEmail = celebrate({
   }),
 });
 
-//module.exports.validateCreateNewCard = celebrate({
-  //body: Joi.object().keys({
-   // name: Joi.string().required().min(2).max(30),
-   // link: Joi.string().required().regex(/^(https?:\/\/)?([\da-z.-]+).([a-z.]{2,6})([/\w.-]*)*\/?$/),
-  //}),
-//}//);
-
 module.exports.validateUserLogin = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required(),
+  }),
+});
+
+module.exports.validateCreateMovie = celebrate({
+  body: Joi.object().keys({
+    country: Joi.string().required(),
+    director: Joi.string().required(),
+    duration: Joi.number().required(),
+    year: Joi.string().required(),
+    description: Joi.string().required(),
+    image: Joi.string().required().regex(URL),
+    trailerLink: Joi.string().required().regex(URL),
+    thumbnail: Joi.string().required().regex(URL),
+    movieId: Joi.string().required(),
+    nameRU: Joi.string().required(),
+    nameEN: Joi.string().required(),
+  }),
+});
+
+module.exports.validateUpdateUser = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
+    email: Joi.string().required().email(),
   }),
 });

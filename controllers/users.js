@@ -1,53 +1,62 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
 const EmailError = require('../errors/EmailError');
-
 const User = require('../models/user');
+const {
+  notFoundUser,
+  takenEmailError,
+  errorDataNewUser,
+  errorDataUpdateProfile,
+  notFoundUserProfile,
+} = require('../utils/const');
 
 const getUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
-      res.status(200).send({ data: user });
+      if (!user) {
+        throw new NotFoundError(notFoundUser);
+      }
+      return res.send(user);
     })
     .catch(next);
 };
 
 const createNewUser = (req, res, next) => {
   const {
-    name, email, password,
+    email, password, name,
   } = req.body;
   bcrypt.hash(password, 10)
-    .then((hash) => User.create({
-      name, email, password: hash,
+    .then((hash) => {
+      User.create({
+        name, email, password: hash,
+      })
+        .then((user) => res.send({
+          name: user.name,
+          email: user.email,
+        }))
+        .catch((err) => {
+          if (err.code === 11000) {
+            next(new EmailError(takenEmailError));
+          } else if (err.name === 'ValidationError') {
+            next(new BadRequestError(errorDataNewUser));
+          } else {
+            next(err);
+          }
+        });
     })
-      .then((user) => res.send({
-        name: user.name,
-        email: user.email,
-      }))
-      .catch((err) => {
-        if (err.name === 'ValidationError') {
-          next(new BadRequestError('Указаны некорректные данные при попытке создания нового пользователя'));
-          return;
-        }
-        if (err.code === 11000) {
-          next(new EmailError('Данный email уже занят'));
-          return;
-        }
-        next(err);
-      }));
+    .catch(next);
 };
 
 const updateProfile = (req, res, next) => {
   const { name, email } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, email }, { new: true, runValidators: true })
-    .orFail(() => next(new NotFoundError('Пользователь не найден. Не удалось обновить информацию')))
+    .orFail(() => next(new NotFoundError(notFoundUserProfile)))
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Указаны некорректные данные при обновлении пользователя'));
+        next(new BadRequestError(errorDataUpdateProfile));
       } else {
         next(err);
       }
