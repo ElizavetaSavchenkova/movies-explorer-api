@@ -64,6 +64,8 @@ const updateProfile = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(errorDataUpdateProfile));
+      } else if (err.code === 11000) {
+        next(new EmailError(takenEmailError));
       } else {
         next(err);
       }

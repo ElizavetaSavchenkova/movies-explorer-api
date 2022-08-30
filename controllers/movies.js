@@ -56,28 +56,42 @@ const createNewMovie = (req, res, next) => {
     });
 };
 
+//const deleteMovie = (req, res, next) => {
+  //const { movieId } = req.params;
+  //Movie.findById(movieId)
+   // .orFail(() => new NotFoundError(notFoundMovie))
+   // .then((movie) => {
+   //   if (movie.owner.toString() === req.user._id.toString()) {
+    //    return Movie.findByIdAndRemove(movieId)
+     //     .then(() => res.send(successfullyDeleteMovie));
+    //  }
+    //  return next(ForbiddenError(errorDeleteMovie));
+    //})
+    //.catch((err) => {
+   //   if (err.name === 'CastError') {
+        //next(new BadRequestError(errorDataMovieDelete));
+    // } else {
+    //    next(err);
+    //  }
+    //});
+//};
+
 const deleteMovie = (req, res, next) => {
-  const { movieId } = req.params;
-  Movie.findById(movieId)
+  Movie.findById(req.params.movieId)
+    .orFail(() => next(new NotFoundError(notFoundMovie)))
     .then((movie) => {
-      if (!movie) {
-        throw new NotFoundError(notFoundMovie);
-      }
       if (movie.owner.toString() !== req.user._id) {
-        throw new ForbiddenError(errorDeleteMovie);
-      } else {
-        Movie.findByIdAndRemove(movieId)
-          .then(() => {
-            res.send(successfullyDeleteMovie);
-          });
+        return next(new ForbiddenError(errorDeleteMovie));
       }
+      return movie.remove()
+        .then(() => res.send(successfullyDeleteMovie))
+        .catch(next);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError(errorDataMovieDelete));
-        return;
+        return next(new BadRequestError(errorDataMovieDelete));
       }
-      next(err);
+      return next(err);
     });
 };
 

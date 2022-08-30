@@ -5,7 +5,7 @@ const {
 } = require('../controllers/movies');
 
 const {
-  validateCreateMovie, validateDeleteMovie,
+  validateCreateMovie, validateDeleteMovieId,
 } = require('../middlewares/validate');
 
 const auth = require('../middlewares/auth');
@@ -13,6 +13,6 @@ const auth = require('../middlewares/auth');
 router.use(auth);
 router.get('/', getAllMovies);
 router.post('/', validateCreateMovie, createNewMovie);
-router.delete('/:movieId', validateDeleteMovie, deleteMovie);
+router.delete('/:movieId', validateDeleteMovieId, deleteMovie);
 
 module.exports = router;

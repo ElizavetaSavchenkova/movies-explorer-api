@@ -26,7 +26,7 @@ module.exports.validateCreateMovie = celebrate({
     image: Joi.string().required().regex(URL),
     trailerLink: Joi.string().required().regex(URL),
     thumbnail: Joi.string().required().regex(URL),
-    movieId: Joi.string().required(),
+    movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
   }),
@@ -39,7 +39,7 @@ module.exports.validateUpdateUser = celebrate({
   }),
 });
 
-module.exports.validateDeleteMovie = celebrate({
+module.exports.validateDeleteMovieId = celebrate({
   params: Joi.object().keys({
     movieId: Joi.string().hex().length(24),
   }),
