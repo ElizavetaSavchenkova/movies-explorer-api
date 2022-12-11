@@ -11,9 +11,10 @@ const {
 } = require('../utils/const');
 
 const getAllMovies = (req, res, next) => {
-  Movie.find({})
-    .then((movies) => {
-      res.send({ movies });
+  const owner = req.user._id;
+  Movie.find({ owner })
+    .then((movie) => {
+      res.send(movie);
     })
     .catch(next);
 };
@@ -64,8 +65,9 @@ const deleteMovie = (req, res, next) => {
         return next(new ForbiddenError(errorDeleteMovie));
       }
       return movie.remove()
-        .then(() => res.send(successfullyDeleteMovie))
-        .catch(next);
+        .then((deletedMovie) => {
+          res.status(200).send({ data: deletedMovie, message: successfullyDeleteMovie });
+        }).catch(next);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
